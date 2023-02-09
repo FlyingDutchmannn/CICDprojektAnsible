@@ -1,0 +1,23 @@
+---
+- name: Install Docker, Docker Compose, and create custom system user
+  hosts: webserver
+  become: yes
+
+  tasks:
+  - name: Install Docker
+    apt:
+      name: docker.io
+      state: present
+
+  - name: Install Docker Compose
+    apt:
+      name: docker-compose
+      state: present
+
+  - name: Create custom system user
+    user:
+      name: container_user
+      password: "1234techstarter!"
+      state: present
+      groups: docker
+      append: yes

@@ -1,0 +1,65 @@
+---
+- name: Install Ansible on Ubuntu 16.04
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Install software-properties-common package
+      apt:
+        name: software-properties-common
+        state: present
+
+    - name: Add Ansible PPA
+      apt_repository:
+        repo: ppa:ansible/ansible
+
+    - name: Update package cache again
+      apt:
+        update_cache: yes
+
+    - name: Install Ansible
+      apt:
+        name: ansible
+        state: present
+        
+################################################################
+
+- name: install packages
+  hosts: all
+  become: yes
+  tasks: 
+    - name: Install list of packages
+      ansible.builtin.apt:
+      update_cache: yes
+      pkg:
+      - nginx
+      - docker.io
+      - curl
+
+    - name: install jenkins and java on jenkins vm
+      hosts: jenkins
+      become: yes
+      tasks:
+        - name: Install Java
+          apt:
+            name: openjdk-8-jdk
+            state: present
+
+        - name: Install Jenkins
+          apt:
+            name: jenkins
+            state: present
+
+    - name: create deploy user on webserver vm
+      hosts: webserver
+      become: yes
+      tasks:
+        - ansible.builtin.user:
+            name: deploy
+            password: "1234techstarter!"
+            shell: /bin/bash
+            groups: docker
+            append: yes 
